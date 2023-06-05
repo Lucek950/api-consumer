@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
-public class ControllerAdvice {
+class ControllerAdvice {
 
   @ExceptionHandler({
       NotFoundUserException.class,
