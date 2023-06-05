@@ -29,6 +29,7 @@ class GetRepositoriesService {
   public List<RepositoryResponse> getRepositoriesForUserLogin(String username) {
     var githubRepositories = githubApiClient.getUserRepositories(username);
     return githubRepositories.stream()
+        .filter(githubRepository -> !githubRepository.fork())
         .map(githubRepository -> new RepositoryResponse(
             githubRepository.name(),
             githubRepository.owner().login(),
@@ -36,5 +37,4 @@ class GetRepositoriesService {
         ))
         .toList();
   }
-
 }

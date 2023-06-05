@@ -1,10 +1,9 @@
 package com.example.apiconsumer;
 
-import com.example.apiconsumer.exception.UnsupportedMediaTypeException;
 import com.example.apiconsumer.response.RepositoryResponse;
+import com.example.apiconsumer.validator.ControllerHeaderValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,13 +23,7 @@ class GetRepositoriesController {
       @PathVariable String username,
       @RequestHeader String header
   ) {
-    if (!header.equals(MediaType.APPLICATION_JSON_VALUE)) {
-      throw new UnsupportedMediaTypeException(header);
-    }
-
-    var result = getRepositoriesService.getRepositoriesForUserLogin(username);
-
-    return ResponseEntity.ok(result);
+    ControllerHeaderValidator.validateMediaType(header);
+    return ResponseEntity.ok(getRepositoriesService.getRepositoriesForUserLogin(username));
   }
-
 }
