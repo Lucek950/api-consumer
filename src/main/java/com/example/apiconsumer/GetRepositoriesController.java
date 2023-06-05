@@ -1,6 +1,7 @@
 package com.example.apiconsumer;
 
 import com.example.apiconsumer.exception.UnsupportedMediaTypeException;
+import com.example.apiconsumer.response.RepositoryResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api-consumer")
-public class Controller {
+@RequestMapping("/repository")
+class GetRepositoriesController {
 
-  private final Servicee service;
+  private final GetRepositoriesService getRepositoriesService;
 
-  @GetMapping("get-repository/{username}")
-  public ResponseEntity<List<ResponseRepository>> getGitHubUserRepository(
+  @GetMapping("/{username}")
+  public ResponseEntity<List<RepositoryResponse>> getRepository(
       @PathVariable String username,
       @RequestHeader String header
   ) {
@@ -27,8 +28,9 @@ public class Controller {
       throw new UnsupportedMediaTypeException(header);
     }
 
-    var result = service.getResponseRepository(username);
+    var result = getRepositoriesService.getRepositoriesForUserLogin(username);
 
     return ResponseEntity.ok(result);
   }
+
 }

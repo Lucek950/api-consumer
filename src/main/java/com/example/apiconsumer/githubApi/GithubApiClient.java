@@ -1,17 +1,19 @@
-package com.example.apiconsumer.github;
+package com.example.apiconsumer.githubApi;
 
-import com.example.apiconsumer.github.readModelGithubApi.BranchReadModelApi;
-import com.example.apiconsumer.github.readModelGithubApi.RepositoryReadModelApi;
+import com.example.apiconsumer.githubApi.response.GithubBranchResponse;
+import com.example.apiconsumer.githubApi.response.GithubRepositoryResponse;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Service
-public class ReadGithubApiService {
+@RequiredArgsConstructor
+@Component
+public class GithubApiClient {
 
   private static final String API_VERSION = "2022-11-28";
   private static final String GITHUB_API = "https://api.github.com";
@@ -19,24 +21,24 @@ public class ReadGithubApiService {
   private static final String USER_BRANCHES_API = GITHUB_API + "/repos/%s/%s/branches";
   private final RestTemplate restTemplate;
 
-  public ReadGithubApiService() {
+  public GithubApiClient() {
     this.restTemplate = new RestTemplate();
   }
 
-  public List<RepositoryReadModelApi> getUserRepositories(String username) {
+  public List<GithubRepositoryResponse> getUserRepositories(String username) {
     return List.of(
         fetchGithubApiData(
             getUserRepositoryUrl(username),
-            RepositoryReadModelApi[].class
+            GithubRepositoryResponse[].class
         )
     );
   }
 
-  public List<BranchReadModelApi> getUserBranches(String username, String nameRepository) {
+  public List<GithubBranchResponse> getUserBranches(String username, String nameRepository) {
     return List.of(
         fetchGithubApiData(
             getUserBranchesUrl(username, nameRepository),
-            BranchReadModelApi[].class
+            GithubBranchResponse[].class
         )
     );
   }
@@ -44,11 +46,10 @@ public class ReadGithubApiService {
   private <T> T fetchGithubApiData(String url, Class<T> responseType) {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-GitHub-Api-Version", API_VERSION);
-    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
     ResponseEntity<T> responseEntity = restTemplate.exchange(
         url,
         HttpMethod.GET,
-        requestEntity,
+        new HttpEntity<>(headers),
         responseType
     );
     return responseEntity.getBody();
