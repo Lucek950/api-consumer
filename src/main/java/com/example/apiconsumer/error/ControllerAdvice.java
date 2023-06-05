@@ -1,8 +1,12 @@
 package com.example.apiconsumer.error;
 
-import com.example.apiconsumer.exception.NotFoundUserException;
+import com.example.apiconsumer.exception.GithubApiErrorException;
 import com.example.apiconsumer.exception.UnsupportedMediaTypeException;
+import com.example.apiconsumer.githubApi.response.GithubErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,13 +15,19 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestControllerAdvice
 class ControllerAdvice {
 
+  private final ObjectMapper objectMapper;
+
+  public ControllerAdvice() {
+    this.objectMapper = new ObjectMapper();
+  }
+
   @ExceptionHandler({
-      NotFoundUserException.class,
+      GithubApiErrorException.class,
   })
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ErrorMessage handleNotFound(Exception exception) {
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorMessage handleInternalServerError(Exception exception) {
     return new ErrorMessage(
-        HttpStatus.NOT_FOUND.value(),
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
         exception.getMessage()
     );
   }
@@ -36,11 +46,18 @@ class ControllerAdvice {
   @ExceptionHandler({
       HttpClientErrorException.class,
   })
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorMessage handleInternalServerError(Exception exception) {
-    return new ErrorMessage(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        exception.getMessage()
+  public ResponseEntity<ErrorMessage> handleInternalServerError(HttpClientErrorException exception) {
+    GithubErrorResponse githubErrorResponse;
+    try {
+      githubErrorResponse = objectMapper.readValue(exception.getResponseBodyAsString(), GithubErrorResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new GithubApiErrorException(e.getMessage());
+    }
+    return new ResponseEntity<>(
+        new ErrorMessage(
+            exception.getStatusCode().value(),
+            githubErrorResponse.message()),
+        exception.getStatusCode()
     );
   }
 }
