@@ -3,7 +3,7 @@ package com.example.apiconsumer.githubApi;
 import com.example.apiconsumer.githubApi.response.GithubBranchResponse;
 import com.example.apiconsumer.githubApi.response.GithubRepositoryResponse;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,14 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@RequiredArgsConstructor
 @Component
 public class GithubApiClient {
 
-  private static final String API_VERSION = "2022-11-28";
-  private static final String GITHUB_API = "https://api.github.com";
-  private static final String USER_REPOSITORIES_API = GITHUB_API + "/users/%s/repos";
-  private static final String USER_BRANCHES_API = GITHUB_API + "/repos/%s/%s/branches";
+  @Value("${github.api.version}")
+  private String apiVersion;
+
+  @Value("${github.api.user.repositories.url}")
+  private String userRepositoriesUrl;
+
+  @Value("${github.api.user.branches.url}")
+  private String userBranchesUrl;
+
   private final RestTemplate restTemplate;
 
   public GithubApiClient() {
@@ -28,7 +32,7 @@ public class GithubApiClient {
   public List<GithubRepositoryResponse> getUserRepositories(String username) {
     return List.of(
         fetchGithubApiData(
-            getUserRepositoryUrl(username),
+            getUserRepositoriesUrl(username),
             GithubRepositoryResponse[].class
         )
     );
@@ -45,7 +49,7 @@ public class GithubApiClient {
 
   private <T> T fetchGithubApiData(String url, Class<T> responseType) {
     HttpHeaders headers = new HttpHeaders();
-    headers.add("X-GitHub-Api-Version", API_VERSION);
+    headers.add("X-GitHub-Api-Version", apiVersion);
     ResponseEntity<T> responseEntity = restTemplate.exchange(
         url,
         HttpMethod.GET,
@@ -55,11 +59,11 @@ public class GithubApiClient {
     return responseEntity.getBody();
   }
 
-  private String getUserRepositoryUrl(String username) {
-    return String.format(USER_REPOSITORIES_API, username);
+  private String getUserRepositoriesUrl(String username) {
+    return String.format(userRepositoriesUrl, username);
   }
 
-  private String getUserBranchesUrl(String username, String nameRepository) {
-    return String.format(USER_BRANCHES_API, username, nameRepository);
+  private String getUserBranchesUrl(String username, String repositoryName) {
+    return String.format(userBranchesUrl, username, repositoryName);
   }
 }
