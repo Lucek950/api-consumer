@@ -1,0 +1,9 @@
+github:
+  api:
+    version: 2022-11-28
+    url: https://api.github.com
+    user:
+      repositories:
+        url: ${github.api.url}/users/%s/repos
+      branches:
+        url: ${github.api.url}/repos/%s/%s/branches
