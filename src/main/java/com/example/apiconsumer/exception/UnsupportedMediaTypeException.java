@@ -2,7 +2,7 @@ package com.example.apiconsumer.exception;
 
 public class UnsupportedMediaTypeException extends RuntimeException {
 
-  public UnsupportedMediaTypeException(String mediaType) {
-    super(String.format("Unsupported media type: %s", mediaType));
+  public UnsupportedMediaTypeException(String mediaTypeValue) {
+    super(String.format("Unsupported media type: %s", mediaTypeValue));
   }
 }

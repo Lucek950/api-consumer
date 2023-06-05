@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-class GetRepositoriesService {
+public class GetRepositoriesService {
 
   private final GithubApiClient githubApiClient;
 
