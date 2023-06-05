@@ -3,6 +3,7 @@ package com.example.apiconsumer.githubApi;
 import com.example.apiconsumer.githubApi.response.GithubBranchResponse;
 import com.example.apiconsumer.githubApi.response.GithubRepositoryResponse;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Component
 public class GithubApiClient {
 
@@ -24,10 +26,6 @@ public class GithubApiClient {
   private String userBranchesUrl;
 
   private final RestTemplate restTemplate;
-
-  public GithubApiClient() {
-    this.restTemplate = new RestTemplate();
-  }
 
   public List<GithubRepositoryResponse> getUserRepositories(String username) {
     return List.of(

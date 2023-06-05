@@ -5,6 +5,7 @@ import com.example.apiconsumer.exception.UnsupportedMediaTypeException;
 import com.example.apiconsumer.githubApi.response.GithubErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,17 +13,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
+@RequiredArgsConstructor
 @RestControllerAdvice
 class ControllerAdvice {
 
   private final ObjectMapper objectMapper;
 
-  public ControllerAdvice() {
-    this.objectMapper = new ObjectMapper();
-  }
-
   @ExceptionHandler({
-      GithubApiErrorException.class,
+      GithubApiErrorException.class
   })
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorMessage handleInternalServerError(Exception exception) {
@@ -33,7 +31,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler({
-      UnsupportedMediaTypeException.class,
+      UnsupportedMediaTypeException.class
   })
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ErrorMessage handleNotAcceptable(Exception exception) {
@@ -44,7 +42,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler({
-      HttpClientErrorException.class,
+      HttpClientErrorException.class
   })
   public ResponseEntity<ErrorMessage> handleInternalServerError(HttpClientErrorException exception) {
     GithubErrorResponse githubErrorResponse;
