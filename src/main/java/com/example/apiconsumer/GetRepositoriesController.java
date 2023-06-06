@@ -4,6 +4,7 @@ import com.example.apiconsumer.response.RepositoryResponse;
 import com.example.apiconsumer.validator.ControllerHeaderValidator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ class GetRepositoriesController {
   @GetMapping("/{username}")
   public ResponseEntity<List<RepositoryResponse>> getRepository(
       @PathVariable String username,
-      @RequestHeader String header
+      @RequestHeader(HttpHeaders.CONTENT_TYPE) String header
   ) {
     ControllerHeaderValidator.validateMediaType(header);
     return ResponseEntity.ok(getRepositoriesService.getRepositoriesForUserLogin(username));

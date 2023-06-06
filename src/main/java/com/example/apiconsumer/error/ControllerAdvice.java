@@ -54,7 +54,8 @@ class ControllerAdvice {
     return new ResponseEntity<>(
         new ErrorMessage(
             exception.getStatusCode().value(),
-            githubErrorResponse.message()),
+            githubErrorResponse.message() +
+                ", URL: " + githubErrorResponse.documentationUrl()),
         exception.getStatusCode()
     );
   }
