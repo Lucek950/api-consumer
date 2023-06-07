@@ -74,6 +74,3 @@ mvn clean install
 mvn spring-boot:run
 ```
 The application will be available at http://localhost:8080.
-
-PS About Me:
-Personally, I feel very weak in conversing in English. I understand documentation, but I cannot have fluent conversations. I apologize for the delivery time of the solution. I struggled with Swagger and wanted to write tests in Groovy, but unfortunately, I had difficulties with that, and nothing came out of it. Although I know that I don't qualify due to the English requirement, I really wanted to deliver the task and perhaps receive feedback.
